@@ -102,11 +102,12 @@
                       near: 'jakarta',
                       type: 'store'
 										 }]
+    //defaultnya cimahi
 		var map = new GMaps({
-			zoom: 5,
+			zoom: 10,
 			el: '#map',
-			lat: -0.789275,
-			lng: 113.92132700000002
+			lat: -6.8841,
+			lng: 107.5413
 		});
     function add_marker(lat, lng, content){
 			map.addMarker({
@@ -133,7 +134,8 @@
 				get_lat_lng     = _.flatten(get_lat_lng)
 				set_center(get_lat_lng[0], get_lat_lng[1], 10) 
       } else {
-				set_center(-0.789275, 113.92132700000002, 5)
+        //defaultnya cimahi
+				set_center(-6.8841, 107.5413, 10)
       }
 		})
     $('input[id^=chk]').on('change',function(){ 
