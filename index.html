@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<link rel="stylesheet" href="bootstrap.min.css">
+	<script src="http://maps.google.com/maps/api/js"></script>
+	<script src="jquery.min.js"></script>
+	<script src="bootstrap.min.js"></script>
+	<script src="lodash.min.js"></script>
+	<script src="gmaps.min.js"></script>
+	<style type="text/css">
+	#map {
+			width: 1200px;
+			height: 400px;
+	}
+	</style>
+</head>
+<body>
+<div id="map"></div>
+<br />
+<form class="form-inline">
+ <label class="sr-only" for="inlineFormInput">City</label>
+ <select class="form-control" id="city">
+     <option value="" selected>Choose</option>
+     <option value="jakarta">Jakarta</option>
+		 <option value="bandung">Bandung</option>
+		 <option value="denpasar">Denpasar</option>
+ </select> 
+ <div class="form-check form-check-inline">
+     <label class="form-check-label">
+			 <input class="form-check-input" type="checkbox" id="chkStore" value="store"> store
+		 </label>
+ </div>
+ <div class="form-check form-check-inline">
+     <label class="form-check-label">
+			 <input class="form-check-input" type="checkbox" id="chkService" value="service center"> service
+		 </label>
+ </div>
+</form>
+	<script>
+		$('#city').val('');
+		$('#chkStore').prop('checked',true);
+    $('#chkService').prop('checked',true);
+    var cities = [{lat: -6.175110, lng: 106.865039, city: 'jakarta'}, {lat: -6.9175, lng: 107.6191, city: 'bandung'}, {lat: -8.670458, lng: 115.212629, city: 'denpasar'}] 
+    var markers    = [{
+                      id: 1,
+                      lat: -8.506854,
+											lng: 115.262478,
+                      infoWindow: {
+                                   content: 'ubud service center'
+																	},
+                      near: 'denpasar',
+                      type: 'service center'
+										 },
+                     {
+                      id: 2,
+                      lat: -8.691289,
+											lng: 115.168165,
+                      infoWindow: {
+                                   content: 'seminyak store'
+																	},
+                      near: 'denpasar',
+                      type: 'store'
+										 },
+										{
+                      id: 3,
+                      lat: -6.918583,
+											lng: 107.660007,
+                      infoWindow: {
+                                   content: 'antapani service center'
+																	},
+                      near: 'bandung',
+                      type: 'service center'
+										 },
+                     {
+                      id: 4,
+                      lat: -6.975713,
+											lng: 107.580103,
+                      infoWindow: {
+                                   content: 'margahayu store'
+																	},
+                      near: 'bandung',
+                      type: 'store'
+										 },
+                     {
+                      id: 5,
+                      lat: -6.202362,
+											lng: 106.811938,
+                      infoWindow: {
+                                   content: 'tanah abang service center'
+																	},
+                      near: 'jakarta',
+                      type: 'service center'
+										 },
+										 {
+                      id: 6,
+                      lat: -6.262269,
+											lng: 106.813418,
+                      infoWindow: {
+                                   content: 'tanah abang store'
+																	},
+                      near: 'jakarta',
+                      type: 'store'
+										 }]
+		var map = new GMaps({
+			zoom: 5,
+			el: '#map',
+			lat: -0.789275,
+			lng: 113.92132700000002
+		});
+    function add_marker(lat, lng, content){
+			map.addMarker({
+				lat: lat,
+				lng: lng,
+				//title: 'Lima',
+				//click: function(e) {
+							//alert('Kieu lain fiz');
+						//},
+				infoWindow: {
+						content: '<p>'+content+'</p>'
+					}
+			})
+    }
+    function set_center(lat, lng, zoom) {
+      map.setCenter({lat: lat, lng: lng});
+      map.setZoom(zoom);
+    }
+    _.map(markers, function(n) { return add_marker( n.lat, n.lng, n.infoWindow.content ) } )
+    $('#city').on('change',function(){ 
+      var city_val    = $(this).val();
+      if (city_val != '') {
+				var get_lat_lng = _.chain(cities).filter(function(n) {return n.city == city_val}).map(function(n){ return [n.lat, n.lng] }).value()
+				get_lat_lng     = _.flatten(get_lat_lng)
+				set_center(get_lat_lng[0], get_lat_lng[1], 10) 
+      } else {
+				set_center(-0.789275, 113.92132700000002, 5)
+      }
+		})
+    $('input[id^=chk]').on('change',function(){ 
+      map.removeMarkers()
+      if( $('#chkStore').is(':checked')) {
+				var service_val = $('#chkStore').val();
+        var get_service_markers = _.chain(markers).filter(function(n) { return n.type == service_val}).map(function(n) { return add_marker(n.lat, n.lng, n.infoWindow.content)}).value();
+			}
+      if( $('#chkService').is(':checked')) {
+				var service_val = $('#chkService').val();
+        var get_service_markers = _.chain(markers).filter(function(n) { return n.type == service_val}).map(function(n) { return add_marker(n.lat, n.lng, n.infoWindow.content)}).value();
+			}
+		})
+	</script>
+</body>
+</html>
