@@ -229,17 +229,32 @@
       map.setCenter({lat: lat, lng: lng});
       map.setZoom(zoom);
     }
-    $places = []
-    function get_places(lat,lng,radius,type) {
-      service = new google.maps.places.PlacesService(map);
+    function get_places(lat,lng,radius,typeArr) {
+      var this_place = new google.maps.LatLng(lat,lng);
+
+      mapp = new google.maps.Map(document.getElementById('map'), {
+        center: this_place,
+        zoom: defaultZoom
+      });
+
+      var request = {
+        location: this_place,
+        radius: radius,
+        type: typeArr
+      };
+
+      service = new google.maps.places.PlacesService(mapp);
       service.nearbySearch(request, callback);
     }
+    var places;
     function callback(results, status) {
       if (status == google.maps.places.PlacesServiceStatus.OK) {
-        for (var i = 0; i < results.length; i++) {
-          var place = results[i];
-          createMarker(results[i]);
-        }
+        places = _.chain(results)
+          .each(function(n) {return n})
+          .map(function(n)  { 
+            return {name: n.name, icon: n.icon, lat: n.geometry.location.lat(), lng: n.geometry.location.lng(), rating: n.rating, vicinity: n.vicinity} 
+          })
+          .value() 
       }
     }
     _.map(markers, function(n) { return add_marker( n.lat, n.lng, n.infoWindow.content, n.type ) } )
@@ -265,7 +280,6 @@
         var get_service_markers = _.chain(markers).filter(function(n) { return n.type == service_val}).map(function(n) { return add_marker(n.lat, n.lng, n.infoWindow.content, n.type)}).value();
 			}
 		})
-
 	</script>
 </body>
 </html>
